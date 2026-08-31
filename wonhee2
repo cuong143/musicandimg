@@ -1,21 +1,29 @@
+local HttpService = game:GetService("HttpService")
+local CoreGui = game:GetService("CoreGui")
+
 local url = "https://raw.githubusercontent.com/cuong143/musicandimg/refs/heads/main/wonheeimg.jpeg"
-local file = "wonhee1.jpeg"
 
 -- Xóa GUI cũ
-local CoreGui = game:GetService("CoreGui")
-local oldGui = CoreGui:FindFirstChild("wonhee1")
-
-if oldGui then
-    oldGui:Destroy()
+for _, v in ipairs(CoreGui:GetChildren()) do
+    if v.Name == "wonhee1" then
+        v:Destroy()
+    end
 end
 
--- Xóa file ảnh cũ để tải lại ảnh mới
-if isfile(file) then
-    delfile(file)
-end
+-- Tạo tên file mới mỗi lần chạy
+local file = "wonhee_" .. HttpService:GenerateGUID(false) .. ".jpeg"
 
 -- Tải ảnh mới
-writefile(file, game:HttpGet(url))
+local success, data = pcall(function()
+    return game:HttpGet(url .. "?t=" .. os.time())
+end)
+
+if not success then
+    warn("Không tải được ảnh: " .. tostring(data))
+    return
+end
+
+writefile(file, data)
 
 -- Tạo GUI
 local gui = Instance.new("ScreenGui")
@@ -37,3 +45,8 @@ image.Parent = gui
 task.wait(3)
 
 gui:Destroy()
+
+-- Xóa file sau khi dùng
+if isfile(file) then
+    delfile(file)
+end
