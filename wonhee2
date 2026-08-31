@@ -1,13 +1,26 @@
 local url = "https://raw.githubusercontent.com/cuong143/musicandimg/refs/heads/main/wonheeimg.jpeg"
 local file = "wonhee1.jpeg"
 
-if not isfile(file) then
-    writefile(file, game:HttpGet(url))
+-- Xóa GUI cũ
+local CoreGui = game:GetService("CoreGui")
+local oldGui = CoreGui:FindFirstChild("wonhee1")
+
+if oldGui then
+    oldGui:Destroy()
 end
 
+-- Xóa file ảnh cũ để tải lại ảnh mới
+if isfile(file) then
+    delfile(file)
+end
+
+-- Tải ảnh mới
+writefile(file, game:HttpGet(url))
+
+-- Tạo GUI
 local gui = Instance.new("ScreenGui")
 gui.Name = "wonhee1"
-gui.Parent = game:GetService("CoreGui")
+gui.Parent = CoreGui
 
 local image = Instance.new("ImageLabel")
 
