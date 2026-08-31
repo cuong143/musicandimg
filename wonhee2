@@ -11,7 +11,7 @@ gui.Parent = game:GetService("CoreGui")
 
 local image = Instance.new("ImageLabel")
 
-local width = 250
+local width = 300
 local height = width * (1200 / 1500)
 
 image.Size = UDim2.fromOffset(width, height)
