@@ -1,4 +1,4 @@
-local url = "https://raw.githubusercontent.com/cuong143/Kur/refs/heads/main/Magnetic.mp3"
+local url = "https://raw.githubusercontent.com/cuong143/musicandimg/refs/heads/main/Magnetic.mp3"
 local file = "Magnetic.mp3"
 
 if not isfile(file) then
