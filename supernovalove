@@ -1,5 +1,5 @@
 local url = "https://raw.githubusercontent.com/cuong143/musicandimg/refs/heads/main/supernovalove.mp3"
-local file = "?.mp3"
+local file = "supernovalove.mp3"
 
 if not isfile(file) then
     writefile(file, game:HttpGet(url))
