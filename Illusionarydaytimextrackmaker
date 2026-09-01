@@ -1,0 +1,15 @@
+local url = "https://raw.githubusercontent.com/cuong143/musicandimg/refs/heads/main/Illusionarydaytimextrackmaker.mp3"
+local file = "Illusionarydaytimextrackmaker.mp3"
+
+if not isfile(file) then
+    writefile(file, game:HttpGet(url))
+end
+
+local sound = Instance.new("Sound")
+sound.SoundId = getcustomasset(file)
+sound.Volume = 6
+sound.Looped = true
+sound.Parent = game:GetService("SoundService")
+sound:Play()
+
+return sound
