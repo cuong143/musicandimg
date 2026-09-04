@@ -1,0 +1,87 @@
+local IllitBaseUrl = "https://raw.githubusercontent.com/cuong143/musicandimg/refs/heads/main/"
+
+local IllitParts = {
+    "Illit_part_00",
+    "Illit_part_01",
+    "Illit_part_02",
+    "Illit_part_03",
+    "Illit_part_04",
+    "Illit_part_05",
+    "Illit_part_06",
+}
+
+_G.IllitSound = _G.IllitSound or nil
+_G.IllitPlaying = _G.IllitPlaying or false
+_G.IllitPlayToken = _G.IllitPlayToken or 0
+
+local function StopIllit()
+    _G.IllitPlaying = false
+    _G.IllitPlayToken = _G.IllitPlayToken + 1
+
+    if _G.IllitSound then
+        pcall(function()
+            _G.IllitSound:Stop()
+            _G.IllitSound:Destroy()
+        end)
+        _G.IllitSound = nil
+    end
+end
+
+local function PlayIllitPart(PartIndex)
+    if not IllitParts[PartIndex] then
+        StopIllit()
+        return
+    end
+
+    if _G.IllitSound then
+        pcall(function()
+            _G.IllitSound:Stop()
+            _G.IllitSound:Destroy()
+        end)
+        _G.IllitSound = nil
+    end
+
+    _G.IllitPlaying = true
+    _G.IllitPlayToken = _G.IllitPlayToken + 1
+    local MyToken = _G.IllitPlayToken
+
+    local PartName = IllitParts[PartIndex]
+    local Url = IllitBaseUrl .. PartName .. ".mp3"
+    local FileName = PartName .. ".mp3"
+
+    local success, err = pcall(function()
+        if not isfile(FileName) then
+            writefile(FileName, game:HttpGet(Url))
+        end
+    end)
+
+    if not success then
+        warn("Lỗi khi tải " .. PartName .. ": " .. tostring(err))
+        if _G.IllitPlaying and MyToken == _G.IllitPlayToken then
+            PlayIllitPart(PartIndex + 1)
+        end
+        return
+    end
+
+    local sound = Instance.new("Sound")
+    sound.SoundId = getcustomasset(FileName)
+    sound.Volume = 6
+    sound.Looped = false
+    sound.Parent = game:GetService("SoundService")
+    sound:Play()
+
+    _G.IllitSound = sound
+
+    sound.Ended:Connect(function()
+        if not _G.IllitPlaying then return end
+        if MyToken ~= _G.IllitPlayToken then return end
+        PlayIllitPart(PartIndex + 1)
+    end)
+end
+
+-- Đăng ký hàm điều khiển ra _G để nút bên ngoài gọi được
+_G.IllitPlay = function() PlayIllitPart(1) end
+_G.IllitStop = StopIllit
+
+-- Bắt đầu phát ngay khi file này được load
+PlayIllitPart(1)
