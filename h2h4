@@ -1,0 +1,71 @@
+local HttpService = game:GetService("HttpService")
+local CoreGui = game:GetService("CoreGui")
+local UserInputService = game:GetService("UserInputService")
+
+local url = "https://raw.githubusercontent.com/cuong143/musicandimg/refs/heads/main/h2h4.jpg"
+
+-- Xác định thiết bị
+local isPE = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
+
+-- Kích thước ảnh theo thiết bị
+local width
+local height
+
+if isPE then
+    -- PE (Mobile / Tablet)
+    width = 250
+    height = width * (926 / 2160)
+else
+    -- PC
+    width = 600
+    height = width * (926 / 2160)
+end
+
+-- Xóa GUI cũ
+for _, v in ipairs(CoreGui:GetChildren()) do
+    if v.Name == "wonhee1" then
+        v:Destroy()
+    end
+end
+
+-- Tạo tên file mới mỗi lần chạy
+local file = "wonhee_" .. HttpService:GenerateGUID(false) .. ".jpeg"
+
+-- Tải ảnh mới
+local success, data = pcall(function()
+    return game:HttpGet(url .. "?t=" .. os.time())
+end)
+
+if not success then
+    warn("Không tải được ảnh: " .. tostring(data))
+    return
+end
+
+writefile(file, data)
+
+-- Tạo GUI
+local gui = Instance.new("ScreenGui")
+gui.Name = "wonhee1"
+gui.Parent = CoreGui
+
+local image = Instance.new("ImageLabel")
+
+image.Size = UDim2.fromOffset(width, height)
+image.Position = UDim2.fromScale(0.5, 0.5)
+image.AnchorPoint = Vector2.new(0.5, 0.5)
+image.BackgroundTransparency = 1
+image.ScaleType = Enum.ScaleType.Fit
+image.Image = getcustomasset(file)
+image.Parent = gui
+
+-- Hiện 3 giây
+task.wait(3)
+
+-- Xóa GUI
+gui:Destroy()
+
+-- Xóa file sau khi dùng
+if isfile(file) then
+    delfile(file)
+end
+```
